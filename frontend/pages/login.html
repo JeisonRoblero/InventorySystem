@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Sistema de Inventarios</title>
+    <link rel="shortcut icon" href="./frontend/src/imgs/icon.png" type="image/x-icon">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body style="background-color: #3c567b">
+    <div id="login-root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+        const axios = window.axios;
+
+        function Login() {
+            const [email, setEmail] = useState('');
+            const [password, setPassword] = useState('');
+            const [errorMessage, setErrorMessage] = useState('');
+            const [hasToken, setHasToken] = useState(false);
+
+            useEffect(() => {
+                // Verifica si el usuario ya está autenticado
+                const checkAuth = () => {
+                    const token = localStorage.getItem('token');
+                    if (token) {
+                        setHasToken(true);
+                        window.location.href = "./"; // Redirige al inicio
+                    }
+                                        
+                    axios.get('./api/check-auth')
+                    .then(response => {
+                        const data = response.data;
+                        if (data.token) {
+                            localStorage.setItem('token', data.token);
+                            getUserInfo(data.user_id);
+                            setTimeout(() => {
+                                window.location.href = "./";
+                            }, 100); 
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error verificando autenticación:', error);
+                    });
+                    
+                    
+                }
+
+                checkAuth();
+            }, []);
+
+            const handleLogin = (e) => {
+                e.preventDefault();
+                axios.post('./api/login', { email, password })
+                    .then(response => {
+                        const data = response.data;
+                        if (data.token) {
+                            setErrorMessage('');
+                            localStorage.setItem('token', data.token);
+                            getUserInfo(data.user_id);
+                            setTimeout(() => {
+                                window.location.href = "./";
+                            }, 100); 
+                        } else {
+                            setErrorMessage('Usuario y/o contraseña inválida');
+                            console.error('No se recibió el token en la respuesta');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error al iniciar sesión', error);
+                    });
+            };
+
+            const getUserInfo = (id) => {
+                axios.get('./api/users/id/'+id)
+                    .then(response => {
+                        const data = response.data;
+                        if (data) {
+                            localStorage.setItem('userInfo', JSON.stringify(data));
+                        } else {
+                            console.error('No se encontro la información del usuario');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error al recuperar la información del usuario', error);
+                    });;
+            }
+
+            const handleGoogleLogin = () => {
+                window.location.href = './api/oauth/google/redirect';
+            };
+
+            if (hasToken) {
+                return null;
+            }
+
+            return (
+                <div className="d-flex align-items-center vh-100">
+                    <div className="container mt-4 p-4 shadow-lg text-light" style={{maxWidth: '400px', borderRadius: '20px', backgroundColor: '#293E5D'}}>
+                        <div className="mb-4 w-100 d-flex justify-content-center align-items-center">
+                            <h2 className="d-flex align-items-center"><img src="./frontend/src/imgs/icon.png" alt="Icono de Inventarios" width="50" height="50" className="me-2"/>Inicio de Sesión</h2>
+                        </div>
+                        <form onSubmit={handleLogin}>
+                            <div className="mb-3">
+                                <label htmlFor="email" className="form-label">Correo:</label>
+                                <input 
+                                    type="email" 
+                                    id="email" 
+                                    className="form-control" 
+                                    value={email} 
+                                    onChange={(e) => setEmail(e.target.value)} 
+                                    required 
+                                />
+                            </div>
+                            <div className="mb-4">
+                                <label htmlFor="password" className="form-label">Contraseña:</label>
+                                <input 
+                                    type="password" 
+                                    id="password" 
+                                    className="form-control" 
+                                    value={password} 
+                                    onChange={(e) => setPassword(e.target.value)} 
+                                    required 
+                                />
+                            </div>
+
+                            {
+                                errorMessage != '' && 
+
+                                <div className="text-center">
+                                    <p className="mt-4 text-danger">{errorMessage}</p>
+                                </div>
+                            }
+
+                            <div className="text-center">
+                                <button type="submit" className="btn btn-secondary fs-5 px-3 py-2">Iniciar Sesión</button>
+                            </div>
+                        </form>
+
+                        <div className="mt-4">
+                            <div className="d-flex justify-content-center">
+                                <button type="submit" onClick={handleGoogleLogin} className="btn btn-primary d-flex align-items-center fs-5 px-3 py-2">
+                                    <div className="me-2 d-flex align-items-center" style={{borderRadius: '50%', padding: "5px", backgroundColor: 'white'}}>
+                                        <img src="./frontend/src/imgs/google.jpg" alt="Icono de Google" width="30" height="30" style={{borderRadius: '50%'}}/>
+                                    </div>
+                                    Iniciar con Google
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="text-center">
+                            <p className="mt-4">¿Aún no tienes una cuenta? <a href='./signup'>Registrate</a></p>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<Login />, document.getElementById('login-root'));
+    </script>
+</body>
+</html>

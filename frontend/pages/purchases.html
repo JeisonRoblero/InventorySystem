@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compras - Sistema de Inventarios</title>
+    <link rel="shortcut icon" href="./frontend/src/imgs/icon.png" type="image/x-icon">
+    
+    <!-- Tema Claro (Bootstrap por defecto) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" id="themeStyles">
+    <!-- Tema Oscuro (Bootswatch Darkly) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/darkly/bootstrap.min.css" rel="stylesheet" id="themeStylesDark" disabled>
+
+    <!-- FontAwesome CSS (para íconos) -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Estilos Personalizados -->
+    <link href="./frontend/css/styles.css" rel="stylesheet">
+
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script defer type="text/babel">
+        const { useState, useEffect } = React;
+        const axios = window.axios;
+
+        function App() {
+            const [isLoggedIn, setIsLoggedIn] = useState(false);
+            const [purchases, setPurchases] = useState([]);
+            const [products, setProducts] = useState([]);
+            const [isDarkMode, setIsDarkMode] = useState(false);
+            const [userInfo, setUserInfo] = useState({});
+            const [category, setCategory] = useState('all');
+
+            useEffect(() => {
+                // Chequear si hay un token para el inicio de sesión
+                const checkLogin = () => {
+                    const token = localStorage.getItem('token');
+                    setIsLoggedIn(!!token);
+                    if (!token) {
+                        window.location.href = './login';
+                    }
+                };
+
+                checkLogin();
+            }, []);
+
+            useEffect(() => {
+                const savedTheme = localStorage.getItem('isDarkMode');
+                if (savedTheme) {
+                    const isDarkMode = savedTheme === 'true';
+                    setIsDarkMode(isDarkMode);
+                    applyTheme(isDarkMode);
+                }
+
+                if (isLoggedIn) {
+                    // Si el usuario está logueado, carga los productos y la info del usuario
+                    const userInfoString = localStorage.getItem('userInfo');
+                    const userInfoData = JSON.parse(userInfoString);
+                    setUserInfo(userInfoData);
+
+                    axios.post('./api/purchases/user', { "user_id": userInfoData.id})
+                        .then(response => {
+                            const data = response.data;
+                            const sortedPurchases = Object.keys(data).sort((a, b) => {
+                                const dateA = new Date(data[a].purchase_date);
+                                const dateB = new Date(data[b].purchase_date);
+                                return dateB - dateA; // Ordena de más reciente a más antiguo
+                            }).map(key => data[key]);
+
+                            setPurchases(sortedPurchases);
+                            getProducts(sortedPurchases);
+                        })
+                        .catch(error => {
+                            console.error('Hubo un error al obtener los productos', error);
+                        });
+                }
+            }, [isLoggedIn]);
+
+            const getProducts = (data) => {
+                
+                // Se convierte el carrito en un array de promesas
+                const purchasePromises = Object.keys(data).map(id => {
+                    return axios.get('./api/products/id/' + data[id].product_id);
+                });
+
+                // Espera a que todas las promesas se resuelvan
+                Promise.all(purchasePromises)
+                    .then(responses => {
+                        const productsList = responses.map(response => response.data);
+                        setProducts(productsList);
+                    })
+                    .catch(error => {
+                        console.error('Hubo un error al obtener los productos', error);
+                    });
+            };
+
+            const logout = () => {
+                axios.get('./api/logout')
+                    .then(response => {
+                        const logouted = response.data.logouted;
+                        if (logouted === "true") {
+                            setIsLoggedIn(false);
+                            localStorage.removeItem('token');
+                            localStorage.removeItem('userInfo');
+                            window.location.reload();
+                        } else {
+                            console.error('No se pudo salir de la sesión');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Hubo un error al cerrar la sesión', error);
+                    });
+            };
+
+            const applyTheme = (isDarkMode) => {
+                const themeLight = document.getElementById('themeStyles');
+                const themeDark = document.getElementById('themeStylesDark');
+
+                if (isDarkMode) {
+                    themeDark.disabled = false;
+                    themeLight.disabled = true;
+                } else {
+                    themeDark.disabled = true;
+                    themeLight.disabled = false;
+                }
+            };
+
+            const toggleTheme = () => {
+                const newDarkMode = !isDarkMode;
+                setIsDarkMode(newDarkMode);
+                applyTheme(newDarkMode);
+                localStorage.setItem('isDarkMode', newDarkMode);
+            };
+
+            if (!isLoggedIn) {
+                return null; // Renderizar nada mientras se redirige
+            }
+
+            return (
+                <div className="container mt-4">
+                    <NavBar toggleTheme={toggleTheme} isDarkMode={isDarkMode} logout={logout} userInfo={userInfo} />
+                    <div className="container mt-4 p-3">
+                        <h1 className="mb-4">Mis Compras</h1>
+                        <div className="left">
+                            <button onClick={() => setCategory('all')} className="btn btn-primary ms-auto me-2 px-3 mb-4 border-0" style={category == 'all' ? {backgroundColor: '#000000', color: '#ffffff'} : {}}>
+                                Todas
+                            </button>
+                            <button onClick={() => setCategory('0')} className="btn btn-warning ms-auto me-2 px-3 mb-4 border-0" style={category == '0' ? {backgroundColor: '#000000', color: '#ffffff'} : {}}>
+                                Pendientes
+                            </button>
+                            <button onClick={() => setCategory('1')} className="btn btn-success ms-auto me-2 px-3 mb-4 border-0" style={category == '1' ? {backgroundColor: '#000000', color: '#ffffff'} : {}}>
+                                Entregadas
+                            </button>
+                        </div>
+                        <ProductList products={products} purchases={purchases} category={category}/>
+                    </div>
+                </div> 
+            );
+        }
+
+        function capitalizeName(name) {
+            if (!name) return ''; 
+            return name
+                .toLowerCase()
+                .split(' ')             
+                .map(word => word.charAt(0).toUpperCase() + word.slice(1)) 
+                .join(' ');      
+        }
+
+        function NavBar({ toggleTheme, isDarkMode, logout, userInfo }) {
+            return (
+                <nav className="navbar navbar-expand-lg navbar-light bg-light">
+                    <div className="container-fluid">
+                        <a className="navbar-brand" href="./">
+                            <h3 className="d-flex align-items-center"><img src="./frontend/src/imgs/icon.png" alt="Icono de Inventarios" width="50" height="50" className="me-2"/>Sistema de Inventarios</h3>
+                        </a>
+
+                        <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                            <span className="navbar-toggler-icon"></span>
+                        </button>
+
+                        <div className="collapse navbar-collapse" id="navbarNav">
+                            <ul className="navbar-nav me-auto">
+                                <li className="nav-item">
+                                    <a className="nav-link" href="#">Productos</a>
+                                </li>
+                            </ul>
+
+                            <div className="d-flex"> 
+                                <button onClick={toggleTheme} className="btn btn-primary ms-auto me-2 px-3">
+                                    {isDarkMode ? (
+                                        <i className="fas fa-sun fa-lg"></i>
+                                    ) : (
+                                        <i className="fas fa-moon fa-lg"></i>
+                                    )}
+                                </button>
+
+                                <button onClick={logout} className="btn btn-danger d-flex align-items-center ms-auto">
+                                    <img src={userInfo?.profile_picture ?? './frontend/src/imgs/profile.png'} alt="Foto de Perfil" className="rounded-circle me-2" width="40" height="40" />
+
+                                    <span className="me-2">{capitalizeName(userInfo?.username ?? 'Usuario')}</span>
+                                    
+                                    <i className="fas fa-sign-out-alt"></i>
+                                </button>
+                                
+                            </div>
+                                
+                        </div>
+
+                    </div>
+                </nav>
+            );
+        }
+
+        function ProductList({ products, purchases, category }) {
+            // Función para agrupar las compras por fecha
+            const groupByDate = (purchases) => {
+                return purchases.reduce((acc, purchase) => {
+                    const purchaseDateTime = new Date(purchase.purchase_date).toLocaleDateString('es-GT', { 
+                        weekday: 'long', day: '2-digit', month: 'long', year: 'numeric', 
+                        hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true
+                    });
+                    if (!acc[purchaseDateTime]) {
+                        acc[purchaseDateTime] = [];
+                    }
+                    acc[purchaseDateTime].push(purchase);
+                    return acc;
+                }, {});
+            };
+
+            // Agrupamos las compras por fecha
+            const groupedPurchases = groupByDate(Object.values(purchases));
+
+            return (
+                <div className="list-group">
+                    {Object.keys(groupedPurchases).map((dateTime) => {
+                        // Filtramos las compras por la categoría seleccionada (si es necesario)
+                        const filteredPurchases = groupedPurchases[dateTime].filter(purchase => category === 'all' || purchase.status === category);
+
+                        // Solo mostramos el título si hay compras en esa fecha y hora
+                        if (filteredPurchases.length === 0) return null;
+
+                        let sum = 0;
+
+                        return (
+                        <div key={dateTime} className="mb-5">
+                            <p className="mb-1 fs-6 btn btn-primary p-2 rounded" style={{ fontWeight: 'bold' }}>
+                                Compra realizada el: {dateTime}
+                            </p>
+                            {groupedPurchases[dateTime].map((purchase) => {
+                                if (category !== 'all' && purchase.status !== category) return null;
+
+                                const product = products.find(product => product.id === purchase.product_id);
+                                const state = purchase.status === '0' ? 'Pendiente' : 'Entregado';
+
+                                if (product) {
+                                    const price = parseFloat(product.price);
+                                    const totalProduct = price * purchase.quantity;
+                                    sum += totalProduct;
+                                    return (
+                                        <div className="list-group-item list-group-item-action d-flex flex-direction-products-info justify-content-between align-items-center" key={product.id} style={{overflow: 'auto'}}>
+                                            <div>
+                                                <h5 className="mb-1">{product.name}</h5>
+                                                <img src={product.picture} alt="Producto" width="100" />
+                                                <p className="mb-1">Disponibles: {product.stock} unidades</p>
+                                                <p className="mb-1">{product.description}</p>
+                                                <p className="mb-1 fs-5 bg-warning p-2 rounded" style={{ fontWeight: 'bold', width: '200px' }}>Precio: {(price).toLocaleString('es-GT', { style: 'currency', currency: 'GTQ', minimumFractionDigits: 2 })}</p>
+                                            </div>
+
+                                            <div className="d-flex align-items-center">
+                                                <h5 className="mb-1 me-2">Estado:</h5>
+                                                <p className="mb-1 me-5 fs-5">{state}</p>
+                                                <h5 className="mb-1 me-2">Cantidad Pedida:</h5>
+                                                <p className="mb-1 me-5 fs-5">{purchase.quantity}</p>
+                                                <p className="mb-1 fs-5 btn btn-success p-2 rounded" style={{ fontWeight: 'bold', maxWidth: '160px', overflow: 'auto', textAlign: 'center' }}>
+                                                    Total: {(totalProduct).toLocaleString('es-GT', { style: 'currency', currency: 'GTQ', minimumFractionDigits: 2 })}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    );
+                                }
+                            })}
+                            <p className="mb-1 fs-9 btn btn-success p-2 rounded w-100" style={{ fontWeight: 'bold' }}>
+                                Suma Total: {sum.toLocaleString('es-GT', { style: 'currency', currency: 'GTQ', minimumFractionDigits: 2 })}
+                            </p>
+                        </div>
+                    )})}
+                </div>
+            );
+        }
+
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

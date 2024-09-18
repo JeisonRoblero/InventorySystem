@@ -1,0 +1,66 @@
+/* Estilo para la barra de desplazamiento en Chrome y Edge */
+::-webkit-scrollbar {
+    width: 7px; 
+    height: 7px;
+    background: transparent; 
+}
+
+::-webkit-scrollbar-track {
+    background: transparent; 
+}
+
+::-webkit-scrollbar-thumb {
+    background: #4f7cbe3a;
+    border-radius: 6px;
+    border-radius: 20px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #0d6dfd;
+}
+
+/* Fondo oscuro para resaltar el modal */
+.modal-backdrop-c {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1040;
+}
+
+/* Pone el modal en el centro vertical */
+.modal-dialog-centered-c {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+.flex-direction-products-info {
+    flex-direction: row;
+}
+
+.space-row {
+    margin-left: 40px;
+}
+
+.space-column {
+    margin-top: 0px;
+}
+
+/* Estilos para pantallas pequeñas (menores de 768px) */
+@media (max-width: 768px) {
+    .flex-direction-products-info {
+        flex-direction: column;
+    }
+
+    .space-row {
+        margin-left: 10px;
+    }
+
+    .space-column {
+        margin-top: 15px;
+    }
+}

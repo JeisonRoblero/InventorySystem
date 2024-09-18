@@ -1,0 +1,17 @@
+RewriteEngine On
+
+# Archivo por defecto si no se especifica ningún archivo en la URL
+DirectoryIndex frontend/index.html
+
+# Redirige las solicitudes que comienzan con 'api' a la carpeta /api
+RewriteCond %{REQUEST_URI} ^/api/
+RewriteRule ^api/(.*)$ /api/$1 [L,QSA]
+
+# Redirige cualquier otra solicitud que no sea un archivo o directorio existente
+# Si la solicitud no tiene una extensión, redirige a 'frontend/pages/nombre.html'
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([^/]+)$ frontend/pages/$1.html [L,QSA]
+
+# Maneja errores 404 si la página no existe
+# ErrorDocument 404 http://localhost/InventorySystem/404
