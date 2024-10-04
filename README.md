@@ -2,9 +2,7 @@
 Sistema de Inventarios con usuarios y compras. Los usuarios pueden registrarse con su cuenta de Google a tráves de OAuth.
 
 Página web: 
-https://jeisonroblero.github.io/InventorySystem/
-o
-https://inventorysys.atwebpages.com/
+http://inventorysys.rf.gd/
 
 ## Capturas de Pantalla
 ![image](https://github.com/user-attachments/assets/d78a5f00-1f79-49a9-a436-80f59fc29081)
