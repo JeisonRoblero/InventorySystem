@@ -16,25 +16,30 @@ Para instalar y ejecutar este sistema, se necesita tener instalados los siguient
 - **XAMPP**
 - **MySQL**
 - **Composer**
+- **Git**
 
 ### Pasos para Instalar
-1. **Clonar el repositorio:**
+1. **Navegar al directorio de htdocs de XAMPP:**
+   ```bash
+   cd C:\xampp\htdocs
+   
+2. **Clonar el repositorio:**
    ```bash
    git clone https://github.com/JeisonRoblero/InventorySystem.git
 
-2. **Navegar al directorio del proyecto (en su API):**
+3. **Navegar al directorio del proyecto (en su API):**
    ```bash
-   cd InventorySystem/api
+   cd InventorySystem\api
 
-3. **Instalar las dependencias con Composer:**
+4. **Instalar las dependencias con Composer:**
    ```bash
    cd composer install
 
-4. **Configurar la base de datos:**
+5. **Configurar la base de datos:**
    - Crear una nueva base de datos en MySQL.
    - Importar el archivo SQL de configuración
 
-5. **Iniciar el servidor:**
+6. **Iniciar el servidor:**
    - Ejecutar XAMPP y asegurarse de que el módulo de Apache y MySQL estén corriendo.
 
 ## Capturas de Pantalla
