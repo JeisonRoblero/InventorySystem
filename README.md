@@ -10,7 +10,7 @@ Sistema de Inventarios con usuarios y compras. Los usuarios pueden registrarse c
 - [Testing: Capturas de Pantalla de Pruebas en Compras](#testing-capturas-de-pantalla-de-pruebas-en-compras)
 
 ### Requisitos
-Para instalar y ejecutar este sistema, asegúrate de tener instalados los siguientes componentes:
+Para instalar y ejecutar este sistema, se necesita tener instalados los siguientes componentes:
 - **PHP 7**
 - **XAMPP**
 - **MySQL**
