@@ -41,6 +41,7 @@ Para instalar y ejecutar este sistema, se necesita tener instalados los siguient
   
 6. **Configurar las credenciales de la base de datos y de Google OAuth:**
    - Crear un archivo .env dentro de la carpeta api/ y agregar las siguientes claves:
+   
    ```bash
    GOOGLE_OAUTH_CLIENT_ID=XXXXX
    GOOGLE_OAUTH_CLIENT_SECRET=XXXXX 
