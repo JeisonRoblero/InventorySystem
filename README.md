@@ -3,6 +3,7 @@ Sistema de Inventarios con usuarios y compras. Los usuarios pueden registrarse c
 
 ### Índice
 - [Requisitos](#requisitos)
+- [Página Web](#pagina-web)
 - [Capturas de Pantalla](#capturas-de-pantalla)
 - [Testing: Capturas de Pantalla de Pruebas en Compras](#testing-capturas-de-pantalla-de-pruebas-en-compras)
 
@@ -13,7 +14,7 @@ Para instalar y ejecutar este sistema, asegúrate de tener instalados los siguie
 - **MySQL**
 - **Composer**
 
-Página web:  
+### Página Web
 [http://inventorysys.rf.gd/](http://inventorysys.rf.gd/)
 
 ## Capturas de Pantalla
