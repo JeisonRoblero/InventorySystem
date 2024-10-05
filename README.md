@@ -37,10 +37,21 @@ Para instalar y ejecutar este sistema, se necesita tener instalados los siguient
 
 5. **Configurar la base de datos:**
    - Crear una nueva base de datos en MySQL.
-   - Importar el archivo SQL de configuración
+   - Importar el archivo SQL de configuración.
+  
+6. **Configurar las credenciales de la base de datos y de Google OAuth:**
+   - Crear un archivo .env dentro de la carpeta api/ y agregar las siguientes claves:
+   ```bash
+   GOOGLE_OAUTH_CLIENT_ID=XXXXX
+   GOOGLE_OAUTH_CLIENT_SECRET=XXXXX 
+   DB_USERNAME=XXXXX 
+   DB_PASSWORD=XXXXX
 
-6. **Iniciar el servidor:**
+7. **Iniciar el servidor:**
    - Ejecutar XAMPP y asegurarse de que el módulo de Apache y MySQL estén corriendo.
+  
+8. **Acceder a la aplicación:**
+   - Se puede acceder mediante un navegador ingresando a ```http://localhost/InventorySystem/``` (o la ruta correspondiente según la configuración del servidor local).
 
 ## Capturas de Pantalla
 <div style="display: flex; flex-wrap: wrap;">
