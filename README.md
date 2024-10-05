@@ -1,9 +1,11 @@
 # InventorySystem
 Sistema de Inventarios con usuarios y compras. Los usuarios pueden registrarse con su cuenta de Google a través de OAuth.
 
+### Página Web
+[http://inventorysys.rf.gd/](http://inventorysys.rf.gd/)
+
 ### Índice
 - [Requisitos](#requisitos)
-- [Página Web](#pagina-web)
 - [Capturas de Pantalla](#capturas-de-pantalla)
 - [Testing: Capturas de Pantalla de Pruebas en Compras](#testing-capturas-de-pantalla-de-pruebas-en-compras)
 
@@ -13,9 +15,6 @@ Para instalar y ejecutar este sistema, asegúrate de tener instalados los siguie
 - **XAMPP**
 - **MySQL**
 - **Composer**
-
-### Página Web
-[http://inventorysys.rf.gd/](http://inventorysys.rf.gd/)
 
 ## Capturas de Pantalla
 <div style="display: flex; flex-wrap: wrap;">
