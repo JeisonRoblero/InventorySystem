@@ -6,6 +6,7 @@ Sistema de Inventarios con usuarios y compras. Los usuarios pueden registrarse c
 
 ### Índice
 - [Requisitos](#requisitos)
+- [Pasos para Instalar](#pasos-para-instalar)
 - [Capturas de Pantalla](#capturas-de-pantalla)
 - [Testing: Capturas de Pantalla de Pruebas en Compras](#testing-capturas-de-pantalla-de-pruebas-en-compras)
 
@@ -15,6 +16,26 @@ Para instalar y ejecutar este sistema, se necesita tener instalados los siguient
 - **XAMPP**
 - **MySQL**
 - **Composer**
+
+### Pasos para Instalar
+1. **Clonar el repositorio:**
+   ```bash
+   git clone https://github.com/tu_usuario/InventorySystem.git
+
+2. **Navegar al directorio del proyecto (en su API):**
+   ```bash
+   cd InventorySystem/api
+
+3. **Instalar las dependencias con Composer:**
+   ```bash
+   cd composer install
+
+4. **Configurar la base de datos:**
+   - Crear una nueva base de datos en MySQL.
+   - Importar el archivo SQL de configuración
+
+5. **Iniciar el servidor:**
+   - Ejecutar XAMPP y asegurarse de que el módulo de Apache y MySQL estén corriendo.
 
 ## Capturas de Pantalla
 <div style="display: flex; flex-wrap: wrap;">
