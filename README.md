@@ -20,7 +20,7 @@ Para instalar y ejecutar este sistema, se necesita tener instalados los siguient
 ### Pasos para Instalar
 1. **Clonar el repositorio:**
    ```bash
-   git clone https://github.com/tu_usuario/InventorySystem.git
+   git clone https://github.com/JeisonRoblero/InventorySystem.git
 
 2. **Navegar al directorio del proyecto (en su API):**
    ```bash
