@@ -4,12 +4,12 @@ Sistema de Inventarios con usuarios y compras. Los usuarios pueden registrarse c
 ### Página Web
 [http://inventorysys.rf.gd/](http://inventorysys.rf.gd/)
 
-### Link de Presentación
-https://prezi.com/view/OPXpzOGA9v6CpDD5anrO/
-
 Ingresar modo administrador con:
 correo: admin@gmail.com
 contraseña: 123
+
+### Link de Presentación
+https://prezi.com/view/OPXpzOGA9v6CpDD5anrO/
 
 ### Índice
 - [Requisitos](#requisitos)
